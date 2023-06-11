@@ -1,0 +1,60 @@
+from news.models import *
+1. Создать двух пользователей (с помощью метода User.objects.create_user('username')):
+	>>> user_1 = User.objects.create_user(username='User1')
+	>>> user_2 = User.objects.create_user(username='User2')
+2. Создать два объекта модели Author, связанные с пользователями:
+	>>> author_1 = Author.objects.create(name=user_1)
+	>>> author_2 = Author.objects.create(name=user_2)
+3. Добавить 4 категории в модель Category:
+	>>> category_1 = Category.objects.create(name='Спорт')
+	>>> category_2 = Category.objects.create(name='Культура')
+	>>> category_3 = Category.objects.create(name='История')
+	>>> category_4 = Category.objects.create(name='Наука')
+4. Добавить 2 статьи и 1 новость:
+	>>> post_1 = Post.objects.create(title='Украденную 60 лет назад картину нашли на аукционе в Нидерландах', content='Украденную 60 лет назад картину нашли на аукционе в Мидделбурге, нидерландской провинции Зеландия. Речь идет о работе
+ "l’Interno Benedicente". Ее автор – художник эпохи позднего Возрождения Галеаццо Кампи (1475–1536). Стоимость произведения оценивается в пять тысяч евро. В 1959 году его вынесли из музея Civico Ala Ponzone в Кремоне. Сотрудник итал
+ьянской институции узнал представленное на торгах полотно и вызвал полицию...', author=author_1)
+	>>> post_2 = Post.objects.create(type='AR', title='«Судите без ненависти» Его называли лучшим адвокатом Российской империи. Как выигрывал безнадежные дела Федор Плевако?', content='История знает немало примеров, когда талантливый ад
+вокат спасал подсудимого от тюрьмы даже в безнадежной ситуации. Ярчайший тому пример — Федор Плевако, самый известный адвокат Российской империи, который благодаря своему острому уму и красноречию выиграл больше 200 дел. Причем сред
+и них было немало таких, где у защиты, казалось, не было никаких шансов на победу, а среди клиентов Плевако были люди самых разных сословий. Сегодня его имя используют как нарицательное для людей, отличающихся красноречием, а медаль
+ имени Плевако вручают выдающимся деятелям адвокатуры...', author=author_1)
+	>>> post_3 = Post.objects.create(type='AR', title='«Это было зашибись» 35 лет назад в СССР отменили запрет на бизнес. На чем первые кооператоры сколотили состояния?', content='Ровно 35 лет назад, 26 мая 1988 года, был принят закон «
+О кооперации в СССР». Впервые за 60 лет гражданам разрешили заниматься любыми незапрещенными видами предпринимательской деятельности. Тут же произошел бум кооперативного движения — кооперативы пользовались огромной популярностью у н
+аселения, потому что предлагали дефицитные товары и даже те услуги, которые еще не были знакомы простым советским людям. Почти моментально самые удачливые кооператоры добились немыслимого по меркам эпохи обогащения. Правда, у многих
+ чуть позже состояния съела инфляция, а кооперативы ушли в прошлое...', author=author_2)
+5. Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий):
+	>>> post_1.category.add(category_2)
+	>>> post_2.category.add(category_3)
+	>>> post_3.category.add(category_2, category_3)
+6. Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий):
+	>>> comment_1 = Comment.objects.create(content='Some text...', user=user_1, post=post_1)
+	>>> comment_2 = Comment.objects.create(content='Some text...', user=user_2, post=post_2)
+	>>> comment_3 = Comment.objects.create(content='Some text...', user=user_2, post=post_3) 
+	>>> comment_4 = Comment.objects.create(content='Some text...', user=user_1, post=post_3)
+7. Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов:
+	>>> post_1.like()
+	>>> post_2.like()
+	>>> post_2.like()
+	>>> post_3.like()
+	>>> post_3.dislike()
+	>>> comment_1.like()
+	>>> comment_2.like()
+	>>> comment_2.like()
+	>>> comment_3.dislike()
+	>>> comment_3.like()
+	>>> comment_4.like()
+	>>> comment_4.dislike()
+8. Обновить рейтинги пользователей:
+	>>> author_1.update_rating()
+	>>> author_2.update_rating()
+9. Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта):
+	>>> best_user = Author.objects.order_by('-user_rating').values('name__username', 'user_rating').first()
+	>>> best_user
+10. Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье:
+	>>> best_post = Post.objects.order_by('-post_rating').values('create_time', 'author__name__username', 'post_rating', 'title').first() 
+	>>> best_post
+	>>> best_post_preview = Post.objects.order_by('-post_rating').first()
+	>>> best_post_preview.preview()
+11. Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье:
+	>>> Comment.objects.filter(post=best_post_preview).values('time_in', 'user', 'comment_rating', 'content')
+
