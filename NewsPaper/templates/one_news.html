@@ -1,12 +1,16 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
-<!-- Название у нас будет Post -->
+{% load custom_filters %}
+
 {% block title %}
 Post
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим новость, идентификатор которой был передан в url -->
 {% block content %}
-<h1>{{ post }}</h1>
+<h6 align="right">{{ post.create_time|date:'d.m.Y P' }}</h6>
+<h1>{{ post.title|censor }}</h1>
+<hr>
+<h4 align="justify">{{ post.content|censor }}</h4>
+<h6 align="right">Автор публикации: {{ post.author.name }}</h6>
+<hr>
 {% endblock content %}
