@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>Публикация</h1>
+<h3>{{ time_now|date:'M d Y' }}</h3>
+<hr>
+<form action="" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Сохранить">
+</form>
+{% endblock content %}

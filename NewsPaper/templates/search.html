@@ -3,17 +3,20 @@
 {% load custom_filters %}
 
 {% block title %}
-News
+Search
 {% endblock title %}
 
 {% block content %}
-    <h1>Все публикации</h1>
+    <h1>Поиск публикаций</h1>
     <h3>{{ time_now|date:'M d Y' }}</h3>
-    <h5>Количество публикаций: {{ news|length }} </h5>
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти" />
+    </form>
     <hr>
-    {% if news %}
+    {% if search %}
         <table cellpadding="20">
-            {% for post in news %}
+            {% for post in search %}
             <tr>
                 <td>{{ post.title|censor }}</td>
                 <td>{{ post.create_time|date:'d.m.Y P' }}</td>

@@ -1,11 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import *
+from django.urls import reverse
 
 
 class Author(models.Model):
-    name = models.OneToOneField(User, on_delete=models.PROTECT, verbose_name='Автор')
+    name = models.OneToOneField(User, on_delete=models.PROTECT)
     user_rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name.username
 
     def update_rating(self):
         rating_post_author = Post.objects.filter(author=self).aggregate(Sum('post_rating'))['post_rating__sum'] * 3
@@ -17,7 +21,10 @@ class Author(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255, unique=True, verbose_name='Категория')
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 article = 'AR'
@@ -30,10 +37,10 @@ TYPES = [
 
 
 class Post(models.Model):
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания публикации')
-    type = models.CharField(max_length=2, choices=TYPES, default=news, verbose_name='Вид публикации')
-    title = models.CharField(max_length=255, verbose_name='Заголовок')
-    content = models.TextField(verbose_name='Контент публикации')
+    create_time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(max_length=2, choices=TYPES, default=news)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
     post_rating = models.IntegerField(default=0)
 
     author = models.ForeignKey(Author, on_delete=models.PROTECT)
@@ -50,6 +57,12 @@ class Post(models.Model):
     def preview(self):
         return self.content[:124] + '...'
 
+    def __str__(self):
+        return f'{self.title.title()}: {self.content[:50]}'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
+
 
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.PROTECT)
@@ -57,8 +70,8 @@ class PostCategory(models.Model):
 
 
 class Comment(models.Model):
-    content = models.TextField(verbose_name='Контент комментария')
-    time_in = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания комментария')
+    content = models.TextField()
+    time_in = models.DateTimeField(auto_now_add=True)
     comment_rating = models.IntegerField(default=0)
 
     user = models.ForeignKey(User, on_delete=models.PROTECT)
