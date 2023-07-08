@@ -4,6 +4,7 @@ from django.db.models import *
 from django.urls import reverse
 
 
+
 class Author(models.Model):
     name = models.OneToOneField(User, on_delete=models.PROTECT)
     user_rating = models.IntegerField(default=0)
@@ -84,5 +85,7 @@ class Comment(models.Model):
     def dislike(self):
         self.comment_rating -= 1
         self.save()
+
+
 
 

@@ -1,6 +1,10 @@
 from django import forms
+from django.shortcuts import redirect
 from django.core.exceptions import ValidationError
+from django.contrib.auth.decorators import login_required
 from .models import Post, Category
+from allauth.account.forms import SignupForm
+from django.contrib.auth.models import Group
 
 
 class PostForm(forms.ModelForm):
@@ -21,3 +25,12 @@ class PostForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+
+class BasicSignupForm(SignupForm):
+    def save(self, request):
+        user = super(BasicSignupForm, self).save(request)
+        common_group = Group.objects.get(name='common')
+        common_group.user_set.add(user)
+        return user
+
