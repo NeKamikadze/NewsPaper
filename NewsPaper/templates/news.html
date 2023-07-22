@@ -11,14 +11,17 @@ News
     <h3>{{ time_now|date:'M d Y' }}</h3>
     <h5>Количество публикаций: {{ news|length }} </h5>
     <hr>
+    <h6>{% for category in category.all %}
+            <a style="width:200px; height:50px; display:inline-flex" href="{% url 'category_news' category.id %}">{{ category }}</a>
+        {% endfor %}</h6>
     {% if news %}
         <table cellpadding="20">
             {% for post in news %}
-            <tr>
-                <td>{{ post.title|censor }}</td>
-                <td>{{ post.create_time|date:'d.m.Y P' }}</td>
-                <td>{{ post.content|truncatewords:20|censor }}</td>
-            </tr>
+                <tr>
+                    <td><a href="{% url 'post_detail' post.id %}">{{ post.title|censor }}</a></td>
+                    <td>{{ post.create_time|date:'d.m.Y P' }}</td>
+                    <td>{{ post.content|truncatewords:20|censor }}</td>
+                </tr>
             {% endfor %}
         </table>
     {% else %}
@@ -26,21 +29,21 @@ News
     {% endif %}
 
     {% if page_obj.has_previous %}
-        <a href="?{% url_replace page=1 %}">1</a>
-        {% if page_obj.previous_page_number != 1 %}
-            ...
-            <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
-        {% endif %}
-    {% endif %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
 
-    {{ page_obj.number }}
+   {{ page_obj.number }}
 
-    {% if page_obj.has_next %}
-        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
-        {% if paginator.num_pages != page_obj.next_page_number %}
-            ...
-            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
-        {% endif %}
-    {% endif %}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
 
 {% endblock content %}

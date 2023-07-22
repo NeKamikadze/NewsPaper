@@ -1,10 +1,16 @@
 from django import forms
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+
 from .models import Post, Category
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
+
+
 
 
 class PostForm(forms.ModelForm):
