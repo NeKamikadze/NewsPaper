@@ -9,6 +9,7 @@ from datetime import datetime
 from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm
+from .tasks import notify_new_post
 
 
 class PostsList(ListView):
@@ -60,6 +61,7 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         if self.request.path == 'article_create':
             post.type = 'AR'
         post.save()
+        notify_new_post.delay(post.pk)
         return super().form_valid(form)
 
 
