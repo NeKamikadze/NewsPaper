@@ -69,6 +69,9 @@ class Post(models.Model):
         super().save(*args, **kwargs)
         cache.delete(f'post-{self.pk}')
 
+    def get_category(self):
+        return ", ".join([str(category.name) for category in self.category.all()])
+
 
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.PROTECT)
